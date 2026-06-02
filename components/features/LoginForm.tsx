@@ -1,81 +1,70 @@
-"use client; // Indica que este componente deve ser um Client Component pois contém interatividade (useState, onClick).
+'use client';
 
-import { useState } from 'react';
-import { signInUser } from '@/services/auth';
-import { type ServerAction } from 'react-dom';
-
-// Define o tipo para o formulário
-interface LoginFormProps {
-  // Em um cenário real, você pode passar o 'action' como prop se não estiver usando um Server Action nativo.
-}
+import { useState, FormEvent } from 'react';
+import { signIn } from '@/services/auth';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Usamos um handler que chama a função de serviço que é assíncrona.
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     setError(null);
-    setIsLoading(true);
 
     try {
-      // Chama a função de serviço que executa a lógica de backend (Server Action).
-      const result = await signInUser(email, password);
-
-      if (result.success) {
-        alert('Login bem-sucedido! Redirecionar para o dashboard...');
-        // Aqui deve ir o redirecionamento real (e.g., router.push('/dashboard'))
-      } else {
-        setError(result.error || 'Ocorreu um erro desconhecido.');
-      }
-    } catch (err) {
-      console.error(err);
-      setError('Falha na conexão com o servidor.');
+      await signIn(email, password);
+      // Typically you would redirect here, e.g., router.push('/dashboard');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(errorMessage);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 p-8 border rounded-lg shadow-lg max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-center">Login Monti</h2>
-
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+    <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '0 auto' }}>
+      <div style={{ marginBottom: '1rem' }}>
+        <label htmlFor="email" style={{ display: 'block', marginBottom: '0.5rem' }}>
+          Email
+        </label>
         <input
           id="email"
           type="email"
-          required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          required
+          style={{ width: '100%', padding: '0.5rem' }}
         />
       </div>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+      <div style={{ marginBottom: '1rem' }}>
+        <label htmlFor="password" style={{ display: 'block', marginBottom: '0.5rem' }}>
+          Password
+        </label>
         <input
           id="password"
           type="password"
-          required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          required
+          style={{ width: '100%', padding: '0.5rem' }}
         />
       </div>
 
-      {error && <p className="text-red-600 text-sm">{error}</p>}
+      {error && (
+        <p style={{ color: 'red', marginBottom: '1rem' }}>{error}</p>
+      )}
 
       <button
         type="submit"
-        disabled={isLoading} 
-        className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white transition duration-150 
-          ${isLoading ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'}`}
+        disabled={loading}
+        style={{ padding: '0.5rem 1rem', cursor: loading ? 'not-allowed' : 'pointer' }}
       >
-        {isLoading ? 'Apenas um momento...' : 'Entrar'}
+        {loading ? 'Signing in...' : 'Sign In'}
       </button>
     </form>
   );
