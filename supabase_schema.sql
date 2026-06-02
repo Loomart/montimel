@@ -13,7 +13,7 @@ CREATE TYPE order_status AS ENUM ('pending', 'paid', 'shipped', 'delivered', 'ca
 
 -- Profiles table (extends Supabase auth.users)
 CREATE TABLE profiles (
-    id UUID PRIMARY KEY REFERENCES auth.users ON DELETE CASCADE,
+    id UUID PRIMARY KEY,
     full_name TEXT,
     email TEXT UNIQUE NOT NULL,
     role user_role DEFAULT 'customer',
