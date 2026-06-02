@@ -1,18 +1,16 @@
-# Development Standards
+"# Development Standards
 
 ## 1. Coding Style
-- **TypeScript**: Strict mode enabled. Avoid `any` at all costs.
-- **Components**: Functional components using arrow functions.
-- **Naming**: 
-  - Components: PascalCase (`ProductCard.tsx`)
-  - Functions/Variables: camelCase (`calculateTotal.ts`)
-  - Constants: UPPER_SNAKE_CASE (`API_URL`)
-
+ - **TypeScript**: Strict mode enabled and avoid `any` type at all costs, using PascalCase for component naming convention (ProductCard.tsx) with camel case functions like calculateTotal(calculateTotal.ts). UPPER_SNAKE_CASE used as constants API_URL in the code base such that it's easy to use them across different parts of your application or even libraries, and enforce consistent naming conventions throughout your project.
 ## 2. Performance Guidelines
-- **Images**: Use `next/image` for automatic optimization.
-- **Data Fetching**: Prioritize Server Components for initial load; use Client Components only for interactivity.
-- **Caching**: Implement strategic revalidation using `revalidatePath` and `revalidateTag`.
+ - **Images**: Use next/image for automatic image optimization (using NextJS built-in serverless edge functions), prioritize Server Components' data fetching methods to avoid Client Component’s side effects, and implement strategic revalidation using `revalidatePath` or 'next.js'.
+ - **Data Fetching**: For interactivity in the components use client component only (ClientComponentsOnlyForInteractivity), for initial load server-side rendering with Server Components preferable to Client Component's side effects, implement strategic revalidation using `revalidatePath` or 'next.js'.
+ - **Caching**: Implement cachability strategies like automatic cache validation (using headers and etags) along the entire application level for better performance of your website/application(by saving server data in Cache memory), to avoid frequent fetching requests from client side browser due revalidation strategy.
 
-## 3. Git Workflow
-- **Branching**: `main` (production), `develop` (staging), `feature/feature-name`.
-- **Commits**: Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`, `style:`).
+## 3. Git Workflow & Branching Model
+ - **Git**: Maintain a clean git workflow with Conventional Commits, as described above (`feat/` for new features and `fix/*` or 'refactor' based on the change), make use of branch-based development to avoid merge conflicts. Use descriptive commit messages that explain what changes were made in each step along your codebase evolution from one version
+   into another, this will allow future team members (or even ourselves) understand why we chose certain actions when and if needed how they can contribute later on or are merged with the project at any point.
+ - **Branching**: `main`(production), use it for production deployment only; create a new branch from 'develop' based off of this to work in parallel (workflow is like feature/feature-name) using Jira issues as trackers, and when ready merge into develop.
+   This will allow everyone on the team to focus their efforts where they are most effective with respecting our codebase evolution over time via pull requests rather than merges all at once for a significant change or feature additions in isolation manner that might lead conflicts of interest during parallel development and testing process between different teams.
+   This ensures more robust collaborative software working, especially when dealing across multiple technologies as well team-members can work independently on specific features while keeping one another's changes isolated from each other to avoid potential merge issues leading into conflict if two developers are contributing at the same time in parallel development and testing process for a feature.
+   It is recommended that this model be followed strictly across your project, not just during code review or as an afterthought on every commit (as suggested by Conventional Commits). Use Jira issues like bug/feature requests to track tasks if there are any changes in the development process which aren't covered elsewhere.
