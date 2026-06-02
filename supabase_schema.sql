@@ -86,6 +86,22 @@ ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
 
 -- 4. POLICIES (Security Rules)
 
+-- Profiles: Users can read/update their own profile, Admins can manage all
+CREATE POLICY "Users can view own profile" 
+ON profiles FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "Users can update own profile" 
+ON profiles FOR UPDATE USING (auth.uid() = id);
+
+CREATE POLICY "Admins can manage profiles" 
+ON profiles FOR ALL USING (
+  (SELECT role FROM profiles WHERE id = auth.uid()) = 'admin'
+);
+
+-- Categories: Public read
+CREATE POLICY "Public categories are viewable by everyone" 
+ON categories FOR SELECT USING (true);
+
 -- Products: Everyone can view, only Admins can edit
 CREATE POLICY "Public products are viewable by everyone" 
 ON products FOR SELECT USING (true);
@@ -102,6 +118,12 @@ ON orders FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Admins can manage all orders" 
 ON orders FOR ALL USING (
   (SELECT role FROM profiles WHERE id = auth.uid()) = 'admin'
+);
+
+-- Order Items: Users can view items for their own orders
+CREATE POLICY "Users can view own order items" 
+ON order_items FOR SELECT USING (
+  EXISTS (SELECT 1 FROM orders WHERE orders.id = order_items.order_id AND orders.user_id = auth.uid())
 );
 
 -- Site Settings: Public read, Admin write
