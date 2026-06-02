@@ -1,9 +1,7 @@
-// lib/supabase.ts
-import { createClient } from '@supabase/supabase-js' // import the library and function creator for Supabase Client in one line (ESM bundler like Rollup, Webpack prefer ES modules syntax) or as a named default export if you want to choose either way depending on your use case.
-import { SUPABASE_URL } from './environments' // You can import the environment variables into this file and then access them directly in code where needed using dot notation (process.env...). Do not forget to run `npm install` or add these env vars as build time inputs if you are building a static site with NextJS etc
-import { SUPABASE_SERVICE_ROLE_KEY } from './environments' // Same here for the service role key, but this is more sensitive (for server-side operations) and should not be exposed in client or public code. It does NOT need to remain as a build time input if you are building with NextJS etc
-// Cliente para el navegador  -> Crear un nuevo SupabaseClient con la URL y clave del supabaseURL (deben estar en las variables de entorno) e importarlo desde '@supabase/supabase-js' o bien como una función default export. Esta es más práctica cuando usas NextJS, Angular etc
-export const supabase = createClient(SUPABASE_URL || '', SUPABASE_SERVICE_ROLE_KEY!);  // Eliminamos el ! para que TypeScript no lo considere como un string vacío y luego podemos acceder al valor desde afuera
-// Cliente para el servidor -> Crear otro SupabaseClient pero esta vez con la URL de supabasedataservice.com (deben estar en las variables de entorno) e importarlo a través del mismo '@supabase/super-js' o bien como una función default export si lo deseas
-export const supabaseServer = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!) // También eliminamos el ! para que TypeScript no lo considere como un string vacío y luego podemos acceder al valor desde afuera
+import { createClient } from '@supabase/supabase-js'
 
+// Replace these with your actual Supabase project URL and anon key
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'YOUR_SUPABASE_URL'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY'
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
