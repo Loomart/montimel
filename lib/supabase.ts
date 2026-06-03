@@ -1,12 +1,15 @@
 import { createBrowserClient } from '@supabase/ssr'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient as createServerClientFromSSR } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-// For Client Components (e.g., forms, hooks)
+/**
+ * Creates a Supabase client for use in Client Components (e.g., forms, hooks).
+ * This client uses the anon key and relies on RLS policies.
+ */
 export function createClient() {
   const cookieStore = cookies()
 
-  return createServerClient(
+  return createServerClientFromSSR(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -29,11 +32,15 @@ export function createClient() {
   )
 }
 
-// For Server Components (e.g., fetching data in server actions)
+/**
+ * Creates a Supabase client specifically for Server Components and Server Actions.
+ * In most cases, `createClient` above is sufficient due to cookie sharing,
+ * but this ensures explicit server-side context if needed.
+ */
 export function createServerClient() {
   const cookieStore = cookies()
 
-  return createServerClient(
+  return createServerClientFromSSR(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
