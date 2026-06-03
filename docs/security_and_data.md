@@ -1,53 +1,16 @@
-"# Security & Data Rules for Monti Project
+# Security & Data Rules
 
----
-## 🔒 Core Security Principles
-**Status:** Enforced
-**Last Updated:** November 1, 2024
-**Owner:** Lead Full Stack Engineer
-**Objective:** Safeguard against unauthorized access and ensure data integrity.
+## Database Access (Supabase)
+- **RLS (Row Level Security)**: NUNCA criar tabelas sem RLS ativado. Todas as tabelas devem ter políticas de segurança definidas.
+- **Client vs Server**: 
+  - No Cliente (Browser): Usar a `supabase-browser-client` com políticas de RLS rigorosas. Nunca expor a `service_role` key no cliente.
+  - No Servidor (Server Components/Actions): Usar `supabase-server-client` com a `service_role` key APENAS em funções administrativas protegidas ou quando necessário para bypass de RLS (com cuidado).
+- **Validation**: Validar todos os inputs de Server Actions utilizando a biblioteca `Zod`. Nunca confiar nos dados vindos do cliente.
 
----
-## 🗄️ Database Access (Supabase)
-### **Row Level Security (RLS)**
-- **Requirement:** All database tables must have RLS enabled.
-- **Enforcement:** Verify RLS policies are correctly configured and enforced for all database operations.
-- **Client:** Use `supabase-browser-client` with strict RLS policies.
-- **Server:** Use `supabase-server-client` with `service_role` **only** in protected administrative functions.
+## Authentication
+- Utilizar Supabase Auth para gestão de sessões.
+- Proibir a passagem de tokens de autenticação (`access_token`) via props de componentes ou URL params; utilizar a sessão do servidor ou hooks de autenticação seguros.
+- Implementar middleware para proteger rotas privadas (ex: `/dashboard`).
 
-### **Validation**
-- **Server Actions:** Validate all inputs using `Zod`.
-- **Consistency:** Ensure validation logic is consistent, well-documented, and tested.
-
----
-## 🔐 Authentication & Authorization
-### **Authentication Tokens**
-- **Server Components:** Use `auth.getSession()` for session management.
-- **Client Components:** Use `useEffect` to listen for authentication state changes.
-- **Security:** Never expose authentication tokens via URL parameters or client-side props.
-
-### **Password & Email Validation**
-- Use Zod schemas for input validation.
-- Implement server-side validation for all authentication-related actions.
-
----
-## 🔒 Data Handling & Processing
-### **Data Fetching**
-- Use `async/await` in Server Components for data fetching.
-- Implement error boundaries and loading states for all major routes.
-
-### **Sensitive Data**
-- **Encryption:** Ensure sensitive data is encrypted at rest and in transit.
-- **Access Control:** Restrict access using RLS and role-based permissions.
-
----
-## 🛡️ Additional Security Measures
-- **Supabase Keys:** Never commit Supabase keys to version control.
-- **Environment Variables:** Store sensitive configurations in environment variables.
-- **Audit Logs:** Regularly review audit logs for suspicious activities.
-
----
-## 📜 Compliance & Documentation
-- **Code Reviews:** Ensure all code adheres to security best practices.
-- **Documentation:** Keep documentation up-to-date with the latest security practices.
-- **Updates:** Regularly review and update security measures to adapt to new threats.
+## Data Fetching & State
+- Utilizar `async/await` em Server Components para buscar dados diretamente da base de dados.
